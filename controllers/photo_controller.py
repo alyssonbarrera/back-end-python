@@ -44,7 +44,7 @@ def add():
         db.session.add(photo)
         db.session.commit()
 
-    return jsonify(photo_cloudinary['url']), 201
+    return jsonify(url = photo_cloudinary['url'], id = photo_cloudinary['public_id']), 201
 
 def read(id):
     ''' Abre uma foto '''
@@ -70,6 +70,17 @@ def update(id):
 def delete(id):
     ''' Deleta uma foto '''
     photo = Photo.query.filter_by(id = id).first()
+    photo_id = photo.photo_id
+    cloudinary.uploader.destroy(photo_id)
+
+    db.session.delete(photo)
+    db.session.commit()
+
+    return jsonify({'mensagem': 'Deletado com sucesso!'}), 204
+
+def deleteById(id):
+    ''' Deleta uma foto '''
+    photo = Photo.query.filter_by(photo_id = id).first()
     photo_id = photo.photo_id
     cloudinary.uploader.destroy(photo_id)
 
